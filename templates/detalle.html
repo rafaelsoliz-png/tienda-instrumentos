@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Detalles del Instrumento</h3>
+                <a href="/products" class="btn btn-sm btn-light">Volver al Inventario</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen }}" class="img-fluid rounded" alt="{{ producto.nombre }}">
+                        {% else %}
+                            <div class="bg-light py-5 border rounded text-muted">Sin Imagen</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4 class="card-title">{{ producto.nombre }}</h4>
+                        <span class="badge bg-primary mb-3">{{ producto.categoria }}</span>
+                        <p class="card-text"><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                        <h4 class="text-success mb-3">Precio: ${{ producto.precio }}</h4>
+                        <p class="card-text"><strong>Stock disponible:</strong> {{ producto.stock }} unidades</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end gap-2">
+                <a href="/products/{{ producto._id }}/edit" class="btn btn-warning">Editar</a>
+                <a href="/products/{{ producto._id }}/delete" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
