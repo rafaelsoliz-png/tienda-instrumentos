@@ -57,5 +57,14 @@ def editar_producto(id):
     producto = productos_collection.find_one({'_id': ObjectId(id)})
     return render_template('editar.html', producto=producto)
 
+@app.route('/products/<id>/delete', methods=['GET', 'POST'])
+def eliminar_producto(id):
+    if request.method == 'POST':
+        productos_collection.delete_one({'_id': ObjectId(id)})
+        return redirect(url_for('listar_productos'))
+    
+    producto = productos_collection.find_one({'_id': ObjectId(id)})
+    return render_template('eliminar.html', producto=producto)
+
 if __name__ == '__main__':
     app.run(debug=True)
