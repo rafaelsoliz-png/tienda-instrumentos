@@ -38,5 +38,24 @@ def ver_producto(id):
     producto = productos_collection.find_one({'_id': ObjectId(id)})
     return render_template('detalle.html', producto=producto)
 
+@app.route('/products/<id>/edit', methods=['GET', 'POST'])
+def editar_producto(id):
+    if request.method == 'POST':
+        productos_collection.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {
+                'nombre': request.form['nombre'],
+                'descripcion': request.form['descripcion'],
+                'precio': float(request.form['precio']),
+                'stock': int(request.form['stock']),
+                'categoria': request.form['categoria'],
+                'imagen': request.form['imagen']
+            }}
+        )
+        return redirect(url_for('listar_productos'))
+    
+    producto = productos_collection.find_one({'_id': ObjectId(id)})
+    return render_template('editar.html', producto=producto)
+
 if __name__ == '__main__':
     app.run(debug=True)
