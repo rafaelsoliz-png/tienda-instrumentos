@@ -6,6 +6,29 @@
     <a href="/products/new" class="btn btn-primary">Añadir Instrumento</a>
 </div>
 
+<div class="card mb-4 shadow-sm border-0 bg-light">
+    <div class="card-body">
+        <form action="/products" method="GET" class="row g-2">
+            <div class="col-md-3">
+                <input type="text" name="nombre" class="form-control" placeholder="Buscar por nombre..." value="{{ request.args.get('nombre', '') }}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="categoria" class="form-control" placeholder="Categoría..." value="{{ request.args.get('categoria', '') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="number" step="0.01" name="precio_min" class="form-control" placeholder="Precio Min ($)" value="{{ request.args.get('precio_min', '') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="number" step="0.01" name="precio_max" class="form-control" placeholder="Precio Max ($)" value="{{ request.args.get('precio_max', '') }}">
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-secondary">Filtrar</button>
+                <a href="/products" class="btn btn-outline-secondary mt-1 btn-sm">Limpiar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="table-responsive">
     <table class="table table-hover table-bordered align-middle">
         <thead class="table-dark">
@@ -21,16 +44,16 @@
         <tbody>
             {% for producto in productos %}
             <tr>
-                <td style="width: 100px;">
+                <td style="width: 100px;" class="text-center">
                     {% if producto.imagen %}
-                        <img src="{{ producto.imagen }}" style="max-width: 80px;">
+                        <img src="{{ producto.imagen }}" style="max-width: 80px;" class="rounded" alt="{{ producto.nombre }}">
                     {% else %}
                         <span class="text-muted">N/A</span>
                     {% endif %}
                 </td>
-                <td>{{ producto.nombre }}</td>
-                <td>{{ producto.categoria }}</td>
-                <td>${{ producto.precio }}</td>
+                <td class="fw-bold">{{ producto.nombre }}</td>
+                <td><span class="badge bg-secondary">{{ producto.categoria }}</span></td>
+                <td class="text-success fw-bold">${{ producto.precio }}</td>
                 <td>{{ producto.stock }}</td>
                 <td>
                     <a href="/products/{{ producto._id }}" class="btn btn-sm btn-info">Ver</a>
@@ -40,7 +63,9 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" class="text-center">No hay instrumentos registrados en el inventario.</td>
+                <td colspan="6" class="text-center py-4 text-muted">
+                    No hay instrumentos que coincidan con la búsqueda.
+                </td>
             </tr>
             {% endfor %}
         </tbody>

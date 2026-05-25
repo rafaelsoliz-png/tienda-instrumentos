@@ -14,19 +14,43 @@ def index():
 
 @app.route('/products')
 def listar_productos():
-    productos = list(productos_collection.find())
+    query = {}
+
+    nombre = request.args.get('nombre')
+    if nombre:
+        query['nombre'] = {'$regex': nombre, '$options': 'i'}
+
+    categoria = request.args.get('categoria')
+    if categoria:
+        query['categoria'] = {'$regex': categoria, '$options': 'i'}
+
+    precio_min = request.args.get('precio_min')
+    precio_max = request.args.get('precio_max')
+
+    if precio_min or precio_max:
+        query['precio'] = {}
+        if precio_min:
+            query['precio']['$gte'] = float(precio_min)
+        if precio_max:
+            query['precio']['$lte'] = float(precio_max)
+
+    productos = list(productos_collection.find(query))
     return render_template('listar.html', productos=productos)
 
 @app.route('/products/new', methods=['GET', 'POST'])
 def crear_producto():
     if request.method == 'POST':
+        imagen_url = request.form['imagen'].strip()
+        if not imagen_url:
+            imagen_url = '/static/default.png'
+
         nuevo_producto = {
             'nombre': request.form['nombre'],
             'descripcion': request.form['descripcion'],
             'precio': float(request.form['precio']),
             'stock': int(request.form['stock']),
             'categoria': request.form['categoria'],
-            'imagen': request.form['imagen']
+            'imagen': imagen_url
         }
         productos_collection.insert_one(nuevo_producto)
         return redirect(url_for('listar_productos'))
@@ -41,6 +65,10 @@ def ver_producto(id):
 @app.route('/products/<id>/edit', methods=['GET', 'POST'])
 def editar_producto(id):
     if request.method == 'POST':
+        imagen_url = request.form['imagen'].strip()
+        if not imagen_url:
+            imagen_url = '/static/default.png'
+
         productos_collection.update_one(
             {'_id': ObjectId(id)},
             {'$set': {
@@ -49,7 +77,7 @@ def editar_producto(id):
                 'precio': float(request.form['precio']),
                 'stock': int(request.form['stock']),
                 'categoria': request.form['categoria'],
-                'imagen': request.form['imagen']
+                'imagen': imagen_url
             }}
         )
         return redirect(url_for('listar_productos'))
